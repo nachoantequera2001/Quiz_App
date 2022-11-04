@@ -1,4 +1,3 @@
-
 //Function to get the name and the quiz from the form presented to the user
 function getInfo(){
   const fname = document.getElementById('fname').value;
@@ -113,7 +112,7 @@ function handle_event(e) {
 
 // Get data from the Restful API
 var GetData = (quiz) => {
-	fetch(`https://my-json-server.typicode.com/nachoantequera2001/QuizQuestions/${quiz}`)
+	fetch(`https://my-json-server.typicode.com/nachoantequera2001/QuestionsQuiz/${quiz}`)
 	.then((response) => {
 		return response.json();
 	})
