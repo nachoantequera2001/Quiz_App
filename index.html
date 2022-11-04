@@ -1,0 +1,236 @@
+
+<!-- index.html - main page of our SPA -->
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Links to JS and CSS files -->
+		<link rel="stylesheet" href="style.css">
+		<script src="script.js"></script>
+
+		<!-- Include handlebars library -->
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+
+		<!-- Innclude bootstap dependencies  -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+
+		<title>Quiz App - CUS 1172</title>
+	</head>
+	<body style="background-color: #ecf5ff;">
+		<div id="widget_view"></div>
+	</body>
+
+	<!--
+  Specify all possible view templates
+  These views can go on a separate file (i.e., views.html) and linked to the current html
+  files using the tag:
+
+    <link href="views.html" rel="import">
+
+  However, this will only work if the views.html file is loaded from a server (not from the file system.)
+ -->
+
+	<!-- Intro menu view -->
+	<script id="Menu" type="text/x-handlebars-template">
+		<div class="container">
+      <div id="home" class="flex-center">
+        <h1>Welcome to my Quiz SPA</h1>
+        <h3>Ignacio Antequera Sánchez - CUS 1172</h3>
+        <div>
+          <form>
+            <label for="fname">First Name</label>
+            <input type="text" id="fname" name="firstname" placeholder="Your name..">
+
+            <label for="lname">Last Name</label>
+            <input type="text" id="lname" name="lastname" placeholder="Your last name..">
+
+            <label for="quiz">Select Quiz</label>
+            <select id="quiz_selection" name="quiz">
+              <option value="Quiz 1">Quiz 1</option>
+              <option value="Quiz 2">Quiz 2</option>
+            </select>
+
+            <input type="submit" onclick="getInfo()">
+          </form>
+					<div>
+						<div id="quizzes" class="col-lg-10 mx-auto">
+							{{#each Quiz}}
+							<button id={{quiz_selection}} class="button_menu">{{quiz_selection}}</button>
+							{{/each}}
+						</div>
+					</div>
+        </div>
+      </div>
+    </div>
+
+
+	</script>
+
+	<!-- Quiz view -->
+	<script id="Quiz" type="text/x-handlebars-template">
+		<div class="row">
+			<div class="title col-lg-6 mx-auto">
+				{{name}}<br>
+				{{currentQuestion}} of {{totalQuestions}}
+			</div>
+		</div>
+
+		<div class="row">
+			<div id="quizQuestions" class="question col-lg-6 mx-auto"></div>
+		</div>
+
+		<div class="row">
+			<div class="overlap Background"></div>
+			<div id="response" class="overlap col-lg-6 mx-auto Response">
+			</div>
+		</div>
+	</script>
+
+	<!-- Result view -->
+	<script id="resultTemplate" type="text/x-handlebars-template">
+		<div class="resultScreen col-lg-6 mx-auto">
+			<div class="row">
+				<h1>You got {{correctResponses}} out of {{totalQuestions}} correct</h1>
+			</div>
+
+			<div class="row">
+				Your percertange grade is:  {{percentage}}%
+			</div>
+
+			<div class="row">
+				<button class = "button_end" id="homePage">Main Menu</button>
+			</div>
+		</div>
+	</script>
+
+	<!-- QUESTIONS VIEWS -->
+
+	<!-- -->
+	<script id="MC" type="text/x-handlebars-template">
+		{{Question}}
+
+		<div class="row">
+			<div class="col-lg-6">
+				<button id="0" class="button h-75">A){{Choices.0.Answer}}</button>
+			</div>
+			<div class="col-lg-6">
+				<button id="1" class="button h-75">B){{Choices.1.Answer}}</button>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<button id="2" class="button h-75">C){{Choices.2.Answer}}</button>
+			</div>
+			<div class="col-lg-6">
+				<button id="3" class="button h-75">D){{Choices.3.Answer}}</button>
+			</div>
+		</div>
+
+		<div class="row mt-2">
+			<button id="submit">
+				Submit
+			</button>
+		</div>
+	</script>
+
+	<!-- -->
+	<script id="Image" type="text/x-handlebars-template">
+		{{Question}}<br>
+		<img src="Images/{{Image}}" alt="Picture" class="center">
+
+		<div class="row">
+			<div class="col-lg-6">
+				<button id="0" class="button h-75">A){{Choices.0.Answer}}</button>
+			</div>
+			<div class="col-lg-6">
+				<button id="1" class="button h-75">B){{Choices.1.Answer}}</button>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<button id="2" class="button h-75">C){{Choices.2.Answer}}</button>
+			</div>
+			<div class="col-lg-6">
+				<button id="3" class="button h-75">D){{Choices.3.Answer}}</button>
+			</div>
+		</div>
+
+		<div class="row mt-2">
+			<button id="submit">
+				Submit
+			</button>
+		</div>
+	</script>
+
+	<!-- -->
+	<script id="TF" type="text/x-handlebars-template">
+		{{Question}}
+
+		<div class="row">
+			<div class="col-lg-6">
+				<button id="0" class="button">A)True</button>
+			</div>
+			<div class="col-lg-6">
+				<button id="1" class="button">B)False</button>
+			</div>
+		</div>
+
+		<div class="row mt-2">
+			<button id="submit">
+				Submit
+			</button>
+		</div>
+	</script>
+
+	<!-- -->
+	<script id="Lists" type="text/x-handlebars-template">
+		<label for="options">{{Frag1}}</label>
+
+		<select id="options" name="options"
+			<option value=-1>(Choose)</option>
+
+			{{#each Choices}}
+			<option value={{id}}>{{Answer}}</option>
+			{{/each}}
+		</select>
+
+		<label for="options">{{Frag2}}</label><br>
+  		<button id="listSubmit">Submit</button>
+	</script>
+
+	<!-- Correct/Incorrect Response View -->
+	<script id="Reaction" type="text/x-handlebars-template">
+		{{#if CorrectAnswer}} <!-- Implement logic using the if-else statement -->
+			<div class="row">
+				<div class="col-lg-12 mx-auto">
+					<span class="resultText">The correct answer is: <b>{{CorrectAnswer}}</b></span>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-12 mx-auto">
+					<span class="resultText">{{Note}}</span>
+				</div>
+			</div>
+
+			<div class="row">
+				<button id="understood">Got it</button>
+			</div>
+		{{else}}
+			<div class="row">
+				<span class="resultText">Correct, good work!</span>
+			</div>
+		{{/if}}
+	</script>
+</html>
