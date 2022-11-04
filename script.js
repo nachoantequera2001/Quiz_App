@@ -9,7 +9,7 @@ function getInfo(){
 // Selects the quiz
 var Quizzes = {
 	"Quiz" : [
-		{"quiz_selection" : "Start Quiz"}
+		{"quiz_selection" : "StartQuiz"}
 	]
 }
 
@@ -113,7 +113,7 @@ function handle_event(e) {
 
 // Get data from the Restful API
 var GetData = (quiz) => {
-	fetch(`https://my-json-server.typicode.com/nachoantequera2001/Quiz_App/${quiz}`)
+	fetch(`https://my-json-server.typicode.com/nachoantequera2001/QuizQuestions/${quiz}`)
 	.then((response) => {
 		return response.json();
 	})
